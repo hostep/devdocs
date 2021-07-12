@@ -96,7 +96,7 @@ The Magento indexing mechanism uses the status value in reindex triggering proce
 
 ### Using application lock mode for reindex processes
 
-Starting with 2.4.3, you can enable `use_application_lock` mode for reindexing through the use of environment variables, or in `app/etc/env.php`:
+Starting with 2.4.3, you can enable `use_application_lock` mode for reindexing through the use of environment variables, or by configuring the `app/etc/env.php` file like so:
 
 ```php
 <?php
@@ -107,11 +107,14 @@ return [
 ];
 ```
 
-In case of a failure, this mode will return the correct status of the indexer.
+In case of a failure during the reindexing of a certain indexer, having this mode enabled will return a more accurate status of the indexer.
+The status can be obtained from the indexer grid in the Magento Admin or through the `bin/magento indexer:status` command in the CLI.
 
-The current status can be obtained from the indexer grid in Magento Admin or through the index status in the CLI.
+{:.bs-callout-warning}
+The status values in the database tables `indexer_state` or `mview_state` may not be the same as what you are seeing because they sometimes don't get updated when an indexer fails.
 
-When this option is used, the values in the SQL table `indexer_state` may not be up to date.
+An additional benefit of this mode is that the Magento application will internally also see a more accurate status of the indexers and if an indexer failed, Magento will now see this and the cronjob will pick up the indexer again to try it again.
+Without this mode, you needed to manually reset the indexer when it failed. With this mode enabled, this is no longer the case anymore.
 
 ### Indexing modes {#m2devgde-indexing-modes}
 
